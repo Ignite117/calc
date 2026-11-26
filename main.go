@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"slices"
 	"strconv"
 	"strings"
@@ -12,7 +14,7 @@ func AVG(nums []int) {
 	for _, value := range nums {
 		sum += value
 	}
-	fmt.Println("Среднее значение:", sum/len(nums))
+	fmt.Println("Среднее значение:", float64(sum)/float64(len(nums)))
 }
 func SUM(nums []int) {
 	var sum int
@@ -24,27 +26,38 @@ func SUM(nums []int) {
 func MED(nums []int) {
 	slices.Sort(nums)
 	if len(nums)%2 != 0 {
-		fmt.Println("Медиана:", nums[len(nums)/2])
+		fmt.Println("Медиана:", float64(nums[len(nums)/2]))
 	} else {
-		fmt.Println("Медиана:", (nums[len(nums)/2]+nums[len(nums)/2-1])/2)
+		fmt.Println("Медиана:", float64((nums[len(nums)/2]+nums[len(nums)/2-1]))/2)
 	}
 }
 func main() {
 	for {
 		var str, operation string
 		nums := []int{}
-		fmt.Println("Введите операцию(AVG/SUM/MED):")
-		fmt.Scan(&operation)
+		scanner := bufio.NewScanner(os.Stdin)
+		fmt.Println("Введите операцию (AVG/SUM/MED):")
+		if !scanner.Scan() {
+			return
+		}
+		operation = strings.ToUpper(strings.TrimSpace(scanner.Text()))
 		fmt.Println("Введите числа через запятую:")
-		fmt.Scan(&str)
-		parts := strings.Split(str, ",")
+		if !scanner.Scan() {
+			return
+		}
+		str = scanner.Text()
+		parts := strings.FieldsFunc(str, func(r rune) bool {
+			return r == ',' || r == ' '
+		})
 		for _, value := range parts {
 			n, err := strconv.Atoi(value)
-			if err != nil {
-				fmt.Println("Ошибка парсинга")
-				continue
+			if err == nil {
+				nums = append(nums, n)
 			}
-			nums = append(nums, n)
+		}
+		if len(nums) == 0 {
+			fmt.Println("Нет элементов в массиве")
+			continue
 		}
 		switch {
 		case operation == "AVG":
