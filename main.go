@@ -32,10 +32,13 @@ func MED(nums []int) {
 	}
 }
 func main() {
+	scanner := bufio.NewScanner(os.Stdin)
 	for {
+		if err := scanner.Err(); err != nil {
+			panic(err)
+		}
 		var str, operation string
 		nums := []int{}
-		scanner := bufio.NewScanner(os.Stdin)
 		fmt.Println("Введите операцию (AVG/SUM/MED):")
 		if !scanner.Scan() {
 			return
@@ -66,6 +69,8 @@ func main() {
 			SUM(nums)
 		case operation == "MED":
 			MED(nums)
+		default:
+			fmt.Println("Некорректная операция")
 		}
 	}
 }
